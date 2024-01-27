@@ -85,7 +85,7 @@ namespace FormsApp
 		private void btnDeserialize_Click(object sender, EventArgs e)
 		{
 			var dlg = new OpenFileDialog();
-			dlg.Filter = "SOAP|*.soap|XML|*.xml|JSON|*.json|Binary|*.bin|YAML|*.yaml";
+			dlg.Filter = "SOAP|*.soap|XML|*.xml|JSON|*.json|Binary|*.bin|YAML|*.yaml|My format|*.formatik";
 
 			if (dlg.ShowDialog() != DialogResult.OK) return;
 
@@ -114,6 +114,12 @@ namespace FormsApp
 										JsonConvert.DeserializeObject<Point>(p.ToString())
 								).ToArray();
 						}
+						break;
+					case ".formatik":
+						points = MyFormat.Deserialize(fs).Select(
+							x => x.Count == 3 ? new Point3D(Convert.ToInt32(x[0]), Convert.ToInt32(x[1]), Convert.ToInt32(x[2])) :
+												new Point(Convert.ToInt32(x[0]), Convert.ToInt32(x[1])))
+							.ToArray();
 						break;
 				}
 			}

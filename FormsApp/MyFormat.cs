@@ -1,23 +1,31 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using PointLib;
 
 namespace FormsApp
 {
 	class MyFormat
 	{
-		private static string Hash(string str)
+		public static List<List<string>> Deserialize(FileStream fs)
 		{
-			return BitConverter.ToString(SHA1.Create().ComputeHash(Encoding.GetEncoding(0).GetBytes(str)));
+			List<List<string>> list = new List<List<string>>();
+			using (var r = new StreamReader(fs))
+			{
+				string line;
+				while ((line = r.ReadLine()) != null)
+				{
+					line = line.Replace("(", "").Replace(")", "").Replace(" ", "");
+					list.Add(line.Split(',').ToList());
+				}
+			}
+			return list;
 		}
 
 		public static void Serialize(FileStream fs, Point[] points)
 		{
 			using (var sw = new StreamWriter(fs))
-				points.ToList().ForEach(x => sw.WriteLine(Hash(x.ToString())));
+				points.ToList().ForEach(x => sw.WriteLine(x.ToString()));
 		}
 	}
 }
